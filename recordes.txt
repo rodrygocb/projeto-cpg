@@ -1,0 +1,4 @@
+-------- Recordes ------- Jonjo -------
+----Jogador----|-Pontuação-|---Tempo---
+  Jogador 1    |      5    |    18 seg
+  Jogador 1    |      5    |    15 seg
