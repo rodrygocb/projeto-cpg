@@ -1,3 +1,5 @@
+//Desenvolvido por Rodrigo Costa
+
 #include <GL/glut.h>
 #include <cstdio>
 #include <time.h>
@@ -12,20 +14,20 @@
 #define SCREEN_HEIGHT 26
 
 
-float playerX = -0.8; // PosiÁ„o X do jogador 1
-float playerY = -0.8; // PosiÁ„o Y do jogador 1
-int score = 0; // PontuaÁ„o do jogador 1
+float playerX = -0.8; // Posi√ß√£o X do jogador 1
+float playerY = -0.8; // Posi√ß√£o Y do jogador 1
+int score = 0; // Pontua√ß√£o do jogador 1
 
-float playerX2 = +0.8; // PosiÁ„o X do jogador 2
-float playerY2 = +0.8; // PosiÁ„o Y do jogador 2
-int score2 = 0; // PontuaÁ„o do jogador 2
+float playerX2 = +0.8; // Posi√ß√£o X do jogador 2
+float playerY2 = +0.8; // Posi√ß√£o Y do jogador 2
+int score2 = 0; // Pontua√ß√£o do jogador 2
 
-float exitX; // PosiÁ„o X da saÌda do labirinto
-float exitY; // PosiÁ„o Y da saÌda do labirinto
+float exitX; // Posi√ß√£o X da sa√≠da do labirinto
+float exitY; // Posi√ß√£o Y da sa√≠da do labirinto
 
 ///cronometro
 int tempo_total = 30; // tempo total em segundos
-int tempo_atual = 0; // tempo atual do cronÙmetro
+int tempo_atual = 0; // tempo atual do cron√¥metro
 int milissegundos = 0; // milissegundos atuais
 int tempo_anterior = 0; // tempo anterior em milissegundos
 char tempo_str[10]; // string que armazena o tempo formatado
@@ -70,7 +72,7 @@ void display(void) {
 	
 
 
-///// DefinÁıes do jogador 2 ////////////////////////
+///// Defin√ß√µes do jogador 2 ////////////////////////
 
 	// Cor do jogador 1
     glColor3f(1.0, 0.0, 0.0); 
@@ -83,7 +85,7 @@ void display(void) {
     glVertex2f(playerX - 0.05, playerY + 0.05); // Ponto superior esquerdo
     glEnd();
     
-    // Exibir a pontuaÁ„o do jogador 1
+    // Exibir a pontua√ß√£o do jogador 1
     glRasterPos2f(-0.9, 0.8);
     char scoreStr[50];
     sprintf(scoreStr, "Pontuacao: %d", score);
@@ -92,7 +94,7 @@ void display(void) {
     }
 
 
-///// DefinÁıes do jogador 2 //////////////////////////
+///// Defin√ß√µes do jogador 2 //////////////////////////
 
     // Cor do jogador 2
     glColor3f(0.0, 0.0, 1.0); 
@@ -106,7 +108,7 @@ void display(void) {
     glEnd();
 
 
-    // Exibir a pontuaÁ„o do jogador 2
+    // Exibir a pontua√ß√£o do jogador 2
     glRasterPos2f(-0.9, 0.7);
     char score2Str[50];
     sprintf(score2Str, "Pontuacao: %d", score2);
@@ -133,19 +135,19 @@ void mover_flag(){
     	float num, num2;
     	char string_formatada[10];
 
-	    // seed para a funÁ„o rand()
+	    // seed para a fun√ß√£o rand()
     	srand(time(NULL));
 
     	for (i = 0; i < 10; i++) {
-        	// gera um n˙mero aleatÛrio inteiro entre 0 e range-1
+        	// gera um n√∫mero aleat√≥rio inteiro entre 0 e range-1
         	int random_int = rand() % range;
 
-        	// ajusta o n˙mero para que fique dentro da faixa desejada e com a variaÁ„o desejada
+        	// ajusta o n√∫mero para que fique dentro da faixa desejada e com a varia√ß√£o desejada
         	num2 = min + random_int * step;
      		
 
-	    	sprintf(string_formatada, "%.1f", num2); // formata o n˙mero em uma string com uma casa decimal
-   			sscanf(string_formatada, "%f", &num); // lÍ a string formatada em uma nova vari·vel float
+	    	sprintf(string_formatada, "%.1f", num2); // formata o n√∫mero em uma string com uma casa decimal
+   			sscanf(string_formatada, "%f", &num); // l√™ a string formatada em uma nova vari√°vel float
    
 			printf("%f",num);
 		}
@@ -183,7 +185,7 @@ void mover_flag(){
 
 
 void keyboard(unsigned char key, int x, int y) {
-    // FunÁ„o de callback do teclado para mover o jogador
+    // Fun√ß√£o de callback do teclado para mover o jogador
 
 int jog, recorde;
 
@@ -192,42 +194,42 @@ int jog, recorde;
     	int tecla;
     	tecla = getch();
 		case 'w': // Movimentar para cima
-            if (playerY < 0.9) { // Verificar se n„o h· colis„o na direÁ„o desejada
+            if (playerY < 0.9) { // Verificar se n√£o h√° colis√£o na dire√ß√£o desejada
                 playerY += 0.1;
             }
             break;
         case 'a': // Movimentar para a esquerda
-            if (playerX > -0.9) { // Verificar se n„o h· colis„o na direÁ„o desejada
+            if (playerX > -0.9) { // Verificar se n√£o h√° colis√£o na dire√ß√£o desejada
                 playerX -= 0.1;
             }
             break;
         case 's': // Movimentar para baixo
-            if (playerY > -0.9) { // Verificar se n„o h· colis„o na direÁ„o desejada
+            if (playerY > -0.9) { // Verificar se n√£o h√° colis√£o na dire√ß√£o desejada
                 playerY -= 0.1;
             }
             break;
         case 'd': // Movimentar para a direita
-            if (playerX < 0.9) { // Verificar se n„o h· colis„o na direÁ„o desejada
+            if (playerX < 0.9) { // Verificar se n√£o h√° colis√£o na dire√ß√£o desejada
                 playerX += 0.1;
             }
             break;
         case 'i': // Movimentar para cima
-            if (playerY2 < 0.9) { // Verificar se n„o h· colis„o na direÁ„o desejada
+            if (playerY2 < 0.9) { // Verificar se n√£o h√° colis√£o na dire√ß√£o desejada
                 playerY2 += 0.1;
             }
             break;
         case 'j': // Movimentar para a esquerda
-            if (playerX2 > -0.9) { // Verificar se n„o h· colis„o na direÁ„o desejada
+            if (playerX2 > -0.9) { // Verificar se n√£o h√° colis√£o na dire√ß√£o desejada
                 playerX2 -= 0.1;
             }
             break;
         case 'k': // Movimentar para baixo
-            if (playerY2 > -0.9) { // Verificar se n„o h· colis„o na direÁ„o desejada
+            if (playerY2 > -0.9) { // Verificar se n√£o h√° colis√£o na dire√ß√£o desejada
                 playerY2 -= 0.1;
             }
             break;
         case 'l': // Movimentar para a direita
-            if (playerX2 < 0.9) { // Verificar se n„o h· colis„o na direÁ„o desejada
+            if (playerX2 < 0.9) { // Verificar se n√£o h√° colis√£o na dire√ß√£o desejada
                 playerX2 += 0.1;
             }
             break;    
@@ -242,8 +244,8 @@ int jog, recorde;
     }
 
    if (playerX >= (exitX - 0.05) && playerX <= (exitX + 0.05) && playerY >= (exitY - 0.05) && playerY <= (exitY + 0.05)) {
-        	score++; // Incrementar a pontuaÁ„o
-        	printf("Pontuacao: %d\n", score); // Exibir a pontuaÁ„o atualizada
+        	score++; // Incrementar a pontua√ß√£o
+        	printf("Pontuacao: %d\n", score); // Exibir a pontua√ß√£o atualizada
         	
         	
         	
@@ -251,8 +253,8 @@ int jog, recorde;
     }
     	
   	if (playerX2 <= (exitX + 0.05) && playerX2 >= (exitX - 0.05) && playerY2 <= (exitY + 0.05) && playerY2 >= (exitY - 0.05)) {
-        	score2++; // Incrementar a pontuaÁ„o
-        	printf("Pontuacao: %d\n", score2); // Exibir a pontuaÁ„o atualizada
+        	score2++; // Incrementar a pontua√ß√£o
+        	printf("Pontuacao: %d\n", score2); // Exibir a pontua√ß√£o atualizada
         	   
         	
         	   mover_flag();    
@@ -320,7 +322,7 @@ void records(){
 
 
 void atualizaTempo(int valor) {
-    // atualiza o tempo atual do cronÙmetro
+    // atualiza o tempo atual do cron√¥metro
     tempo_atual = (glutGet(GLUT_ELAPSED_TIME) - tempo_anterior + milissegundos) / 1000;
     if (tempo_atual > tempo_total) {
         tempo_atual = tempo_total;
@@ -329,7 +331,7 @@ void atualizaTempo(int valor) {
     sprintf(tempo_str, "%.1f", (float)tempo_atual);
     // redesenha a janela
     glutPostRedisplay();
-    // registra a funÁ„o novamente para atualizar o tempo a cada 10 milissegundos
+    // registra a fun√ß√£o novamente para atualizar o tempo a cada 10 milissegundos
     glutTimerFunc(0, atualizaTempo, 0);
 }
 
@@ -339,7 +341,7 @@ int main(int argc, char** argv) {
 	setlocale(LC_ALL, "Portuguese");
 	glutInit(&argc, argv);
 
-    // registra a funÁ„o que atualiza o tempo
+    // registra a fun√ß√£o que atualiza o tempo
     tempo_anterior = glutGet(GLUT_ELAPSED_TIME);
     glutTimerFunc(10, atualizaTempo, 0);
 
@@ -350,7 +352,7 @@ int main(int argc, char** argv) {
 		printf(" |        Jonjo Game        | \n"); 
 		printf(" --------------------------\n");
 		printf("1. Start Game\n");
-		printf("2. InstruÁıes\n");	 
+		printf("2. Instru√ß√µes\n");	 
 		printf("3. Recordes\n");
 		printf("4. Quit\n\n");
 		printf("Select option: ");
@@ -400,8 +402,8 @@ return 0;
 
 /*
 #include <GL/glut.h>
-float playerX = -0.8; // PosiÁ„o X do jogador
-float playerY = -0.8; // PosiÁ„o Y do jogador
+float playerX = -0.8; // Posi√ß√£o X do jogador
+float playerY = -0.8; // Posi√ß√£o Y do jogador
 void display(void) {
     glClear(GL_COLOR_BUFFER_BIT);
     glColor3f(1.0, 1.0, 1.0); // Cor dos caminhos do labirinto
@@ -416,8 +418,8 @@ void display(void) {
     glVertex2f(-0.9, 0.9);
     glVertex2f(0.9, 0.9);
     glEnd();
-    glColor3f(0.0, 1.0, 0.0); // Cor da saÌda do labirinto
-    // Desenhar a saÌda do labirinto
+    glColor3f(0.0, 1.0, 0.0); // Cor da sa√≠da do labirinto
+    // Desenhar a sa√≠da do labirinto
     glBegin(GL_QUADS);
     glVertex2f(0.8, -0.9); // Ponto inferior esquerdo
     glVertex2f(0.9, -0.9); // Ponto inferior direito
@@ -439,25 +441,25 @@ void init(void) {
     glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0); // Sistema de coordenadas
 }
 void keyboard(unsigned char key, int x, int y) {
-    // FunÁ„o de callback do teclado para mover o jogador
+    // Fun√ß√£o de callback do teclado para mover o jogador
     switch (key) {
         case 'w': // Movimentar para cima
-            if (playerY < 0.9) { // Verificar se n„o h· colis„o na direÁ„o desejada
+            if (playerY < 0.9) { // Verificar se n√£o h√° colis√£o na dire√ß√£o desejada
                 playerY += 0.1;
             }
             break;
         case 'a': // Movimentar para a esquerda
-            if (playerX > -0.9) { // Verificar se n„o h· colis„o na direÁ„o deseja
+            if (playerX > -0.9) { // Verificar se n√£o h√° colis√£o na dire√ß√£o deseja
 				playerX -= 0.1;
 			}
 			break;
 		case 's': // Movimentar para baixo
-			if (playerY > -0.9) { // Verificar se n„o h· colis„o na direÁ„o desejada
+			if (playerY > -0.9) { // Verificar se n√£o h√° colis√£o na dire√ß√£o desejada
 				playerY -= 0.1;
 			}
 			break;
 		case 'd': // Movimentar para a direita
-			if (playerX < 0.9) { // Verificar se n„o h· colis„o na direÁ„o desejada
+			if (playerX < 0.9) { // Verificar se n√£o h√° colis√£o na dire√ß√£o desejada
 				playerX += 0.1;
 			}
 			break;
@@ -509,7 +511,7 @@ int main(int argc, char** argv) {
 
 
 
-//////////////  controle de colis„o
+//////////////  controle de colis√£o
 /*
 var rect1 = {x: 5, y: 5, width: 50, height: 50}
 var rect2 = {x: 20, y: 10, width: 10, height: 10}
@@ -575,25 +577,25 @@ void draw_maze()
 }
 void draw_triangle(){
 	
-	int a = WIDTH / 2; // posiÁ„o inicial do tri‚ngulo
+	int a = WIDTH / 2; // posi√ß√£o inicial do tri√¢ngulo
     int b = HEIGHT / 2;
-    int size = 5; // tamanho do tri‚ngulo
+    int size = 5; // tamanho do tri√¢ngulo
     while (1) {
         if (kbhit()) { // se alguma tecla for pressionada
-            int key = getch(); // obtÈm o cÛdigo da tecla pressionada
+            int key = getch(); // obt√©m o c√≥digo da tecla pressionada
             if (key == 27) { // se for a tecla ESC, sai do programa
                 break;
             }
-            else if (key == 'a') { // se for a tecla 'a', move o tri‚ngulo para a esquerda
+            else if (key == 'a') { // se for a tecla 'a', move o tri√¢ngulo para a esquerda
                 a -= 10;
             }
-            else if (key == 'd') { // se for a tecla 'd', move o tri‚ngulo para a direita
+            else if (key == 'd') { // se for a tecla 'd', move o tri√¢ngulo para a direita
                 a += 10;
             }
-            else if (key == 'w') { // se for a tecla 'w', move o tri‚ngulo para cima
+            else if (key == 'w') { // se for a tecla 'w', move o tri√¢ngulo para cima
                 b -= 10;
             }
-            else if (key == 's') { // se for a tecla 's', move o tri‚ngulo para baixo
+            else if (key == 's') { // se for a tecla 's', move o tri√¢ngulo para baixo
                 b += 10;
             }
     
@@ -618,7 +620,7 @@ int main()
     
     
 	int x, y;
-// Define a semente aleatÛria
+// Define a semente aleat√≥ria
     srand(time(NULL));
     // Inicializa o labirinto com todas as paredes
     for (x = 0; x < COLS; x++) {
@@ -627,9 +629,9 @@ int main()
         }
     }
     // Gera o labirinto
-    // Aqui vocÍ pode utilizar o algoritmo de sua preferÍncia para gerar o labirinto
+    // Aqui voc√™ pode utilizar o algoritmo de sua prefer√™ncia para gerar o labirinto
     // Por exemplo, o algoritmo de Kruskal, Prim ou Recursive Backtracker
-    // Neste exemplo, eu vou gerar um labirinto aleatÛrio
+    // Neste exemplo, eu vou gerar um labirinto aleat√≥rio
     for (x = 0; x < COLS; x++) {
         for (y = 0; y < ROWS; y++) {
             int r = rand() % 4;
