@@ -1,56 +1,112 @@
 
+/*
+#include <GL/glut.h>
+
+void init() {
+   // Habilita a iluminação
+   glEnable(GL_LIGHTING);
+   
+   // Define a cor de fundo
+   glClearColor(0.0, 0.0, 0.0, 0.0);
+
+   // Define a posição da luz
+   GLfloat light_pos[] = { 0.0, 0.0, 1.0, 0.0 };
+   glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+
+   // Define as propriedades de iluminação
+   GLfloat ambient[] = { 0.2, 0.2, 0.2, 1.0 };
+   GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+   GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
+   GLfloat shininess[] = { 50.0 };
+   glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+   glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+   glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+   glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
+
+   // Habilita a fonte de luz
+   glEnable(GL_LIGHT0);
+
+}
+
+void display() {
+  // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  // glutSolidTeapot(0.5);
+  // glutSwapBuffers();
+}
+*/
+/*
+int main(int argc, char** argv) {
+   glutInit(&argc, argv);
+   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+   glutInitWindowSize(400, 400);
+   glutCreateWindow("Iluminação com GLUT");
+   glutDisplayFunc(display);
+   init();
+   glutMainLoop();
+   return 0;
+}
+*/
+
+
 #include <GL/glut.h>
 #include <cstdio>
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
-
+#include <dos.h> 
+#include <windows.h>
+#include <locale.h>
 
 #define SCREEN_WIDTH 90
-#define SCREEN_HEIGHT 26
+#define SCREEN_HEIGHT 30
 
 
-float playerX = -0.8; // Posição X do jogador
-float playerY = -0.8; // Posição Y do jogador
+float playerX = -0.8; // Posição X do jogador 1
+float playerY = -0.8; // Posição Y do jogador 1
+int score = 0; // Pontuação do jogador 1
+
+float playerX2 = +0.8; // Posição X do jogador 2
+float playerY2 = +0.8; // Posição Y do jogador 2
+int score2 = 0; // Pontuação do jogador 2
+
 float exitX; // Posição X da saída do labirinto
 float exitY; // Posição Y da saída do labirinto
-int score = 0; // Pontuação do jogador
 
-float playerX2 = +0.8; // Posição X do jogador
-float playerY2 = +0.8; // Posição Y do jogador
-float exitX2; // Posição X da saída do labirinto
-float exitY2; // Posição Y da saída do labirinto
-int score2 = 0; // Pontuação do jogador
-  
-  /*
 ///cronometro
-int tempo_total = 30; // tempo total em segundos
+int tempo_total = 100; // tempo total em segundos
 int tempo_atual = 0; // tempo atual do cronômetro
 int milissegundos = 0; // milissegundos atuais
 int tempo_anterior = 0; // tempo anterior em milissegundos
 char tempo_str[10]; // string que armazena o tempo formatado
-*/
-/*
-unsigned long rand_seed = 1;
 
-unsigned int rand_custom() {
-    rand_seed = rand_seed * 1103515245 + 12345;
-    return (unsigned int)(rand_seed / 65536) % 32768;
-}
-*/
+//data
+time_t agora = time(NULL);
+struct tm *data = localtime(&agora);
+
+int dia = data->tm_mday;
+int mes = data->tm_mon + 1;  // Adicionar 1 ao mês, pois janeiro é representado como 0
+int ano = data->tm_year + 1900;  // Adicionar 1900 ao ano, pois o valor armazenado é o número de anos desde 1900
+
+
+////// cores 
+float red = 1.0f, green = 1.0f, blue = 1.0f; // cor da flag
+float red1 = 1.0f, green1 = 1.0f, blue1 = 1.0f; // cor do jogador 1
+float red2 = 1.0f, green2 = 1.0f, blue2 = 1.0f; // cor do jogador 2
+
+
+float v1 = 0.0, v2 = 0.0, v3 = 0.0, v4 = 0.0; 
 
 void display(void) {
 
- /*   // desenha o texto com o tempo na posição (10, 10)
-    glRasterPos2i(10, 10);
+    // desenha o cronometro
+    glRasterPos2f(-0.5, 0.8);
     for (int i = 0; i < strlen(tempo_str); i++) {
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, tempo_str[i]);
+       glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, tempo_str[i]);
     }
+    glutSwapBuffers();
 
-    //glutSwapBuffers();
-*/	
-	
+
 	
     glClear(GL_COLOR_BUFFER_BIT);
     glColor3f(1.0, 1.0, 1.0); // Cor dos caminhos do labirinto
@@ -67,13 +123,9 @@ void display(void) {
     glVertex2f(0.9, 0.9);
     glEnd();
 
-    glColor3f(1.0, 0.5, 1.0); // Cor da saída do labirinto
+    glColor3f(red, green, blue); // Cor da flag
 
-
-
-	
-
-    // Desenhar a saída do labirinto
+    // Desenhar a flag
     glBegin(GL_QUADS);
     glVertex2f(exitX - 0.05, exitY - 0.05); // Ponto inferior esquerdo
     glVertex2f(exitX + 0.05, exitY - 0.05); // Ponto inferior direito
@@ -81,18 +133,12 @@ void display(void) {
     glVertex2f(exitX - 0.05, exitY + 0.05); // Ponto superior esquerdo
     glEnd();
 	
-//  glBegin(GL_QUADS);
-//  glVertex2f(0.8, -0.9); // Ponto inferior esquerdo
-//  glVertex2f(0.9, -0.9); // Ponto inferior direito
-//  glVertex2f(0.9, -0.8); // Ponto superior direito
-//  glVertex2f(0.8, -0.8); // Ponto superior esquerdo
-//  glEnd();
 
 
 ///// Definções do jogador 2 ////////////////////////
 
 	// Cor do jogador 1
-    glColor3f(1.0, 0.0, 0.0); 
+    glColor3f(red1, green1, blue1);
 	
     // Desenhar o jogador 1
     glBegin(GL_QUADS);
@@ -112,8 +158,9 @@ void display(void) {
 
 
 ///// Definções do jogador 2 //////////////////////////
+
     // Cor do jogador 2
-    glColor3f(0.0, 0.0, 1.0); 
+    glColor3f(red2, green2, blue2);
 	
 	// Desenhar o jogador 2
     glBegin(GL_QUADS);
@@ -123,7 +170,6 @@ void display(void) {
     glVertex2f(playerX2 + 0.05, playerY2 - 0.05); // Ponto superior esquerdo
     glEnd();
 
-    
 
     // Exibir a pontuação do jogador 2
     glRasterPos2f(-0.9, 0.7);
@@ -133,6 +179,29 @@ void display(void) {
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, score2Str[ii]);
     }
     glFlush();
+	    
+    
+    
+    
+    
+	
+    // Define a posição da luz
+    // Define a posição da luz
+    GLfloat light_pos[] = { v1, v2, v3, v4 };
+    glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+
+    // Define as propriedades de iluminação
+    GLfloat ambient[] = { 0.2, 0.2, 0.2, 1.0 };
+    //GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+    //GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    //GLfloat shininess[] = { 100.0 };
+    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+    //glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+    //glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+    //glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
+	
+    // Habilita a fonte de luz
+    //glEnable(GL_LIGHT0);
 }
 
 
@@ -140,12 +209,13 @@ void display(void) {
 void init(void) {
     glClearColor(0.0, 0.0, 0.0, 0.0); // Cor de fundo
     glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0); // Sistema de coordenadas
+       
+    
 }
 
 
 
-
-void mover_flag(){
+void mover_flag(){ // função para mover a flag dentro do espaço
 	
   int i;
     	float min = -0.9, max = 0.9, step = 0.05;
@@ -162,20 +232,18 @@ void mover_flag(){
 
         	// ajusta o número para que fique dentro da faixa desejada e com a variação desejada
         	num2 = min + random_int * step;
-     		// printf("%f",num);
-   
+     		
 
 	    	sprintf(string_formatada, "%.1f", num2); // formata o número em uma string com uma casa decimal
    			sscanf(string_formatada, "%f", &num); // lê a string formatada em uma nova variável float
    
-			printf("%f",num);
+			//printf("%f",num);  
 		}
  		
-		
+		 		
 		exitX=exitX-num;
     	exitY=exitY+num;
 		
-
 
 	if(exitX<-0.9 && exitY<-0.9){
 		exitX=exitX+num;
@@ -199,30 +267,55 @@ void mover_flag(){
 			exitY=exitY+num;
 	}else{
 	}
-		
-    
-   
-	
-	
-	
-	
-		
-		
-   	
- 
+		 
+}
+
+void fecharJanela() {
+    // Liberar recursos e encerrar o programa
+    glutDestroyWindow(glutGetWindow());
+    exit(0);
 }
 
 
 
+
+void records(){
+	system("cls");
+	printf("\n\n");
+	FILE* arquivo = fopen("recordes.txt", "r");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir arquivo.\n");
+        
+    }
+
+    char linha[100];
+    while (fgets(linha, 100, arquivo) != NULL) {
+        printf("%s", linha);
+    }
+
+    fclose(arquivo);
+    printf("\n\n\n");
+	system("pause");
+	int main();
+}
+
+
+
+// Função de callback do teclado para mover o jogador
 void keyboard(unsigned char key, int x, int y) {
-    // Função de callback do teclado para mover o jogador
 
-	
-	
 
+int jog, recorde;
+
+    
     switch (key) {
     	int tecla;
     	tecla = getch();
+    	case 27: // tecla esc
+        	printf("\n\nVocê escolheu sair...");
+        	printf("\n\nVolte logo...\n\n");
+        	exit(0);
+			break;
 		case 'w': // Movimentar para cima
             if (playerY < 0.9) { // Verificar se não há colisão na direção desejada
                 playerY += 0.1;
@@ -262,133 +355,203 @@ void keyboard(unsigned char key, int x, int y) {
             if (playerX2 < 0.9) { // Verificar se não há colisão na direção desejada
                 playerX2 += 0.1;
             }
-            break;    
-        case 'r': // Reiniciar o jogo
-        	break;
-        case 'p': // Mudar a cor do jogador
-			break; 	
+            break;
+        // 1 a 3 - cores do jogador 1
+        case '1': // amarelo
+        	red1 = 1.0f;
+            green1 = 1.0f;
+            blue1 = 0.0f;
+            break;
+    	case '2': // marrom
+        	red1 = 0.65f;
+            green1 = 0.16f;
+            blue1 = 0.16f;
+    		break;
+    	case '3': // cinza
+        	red1 = 0.2f;
+            green1 = 0.2f;
+            blue1 = 0.2f;
+    		break;
+    	// 4 a 6 - cores do jogador 2
+        case '4': //magenta
+        	red2 = 1.0f;
+            green2 = 0.0f;
+            blue2 = 1.0f;
+    		break;
+    	case '5': // safira
+        	red2 = 0.0f;
+            green2 = 0.08f;
+            blue2 = 0.5f;
+    		break;
+    	case '6': // lavanda
+        	red2 = 0.9f;
+            green2 = 0.7f;
+            blue2 = 0.9f;
+    		break;
+		// 7 a 9 - cores da flag    
+        case '7': // vermelho
+        	red = 1.0f;
+            green = 0.0f;
+            blue = 0.0f;
+    		break;
+		case '8': // verde
+        	red = 0.0f;
+            green = 1.0f;
+            blue = 0.0f;
+    		break;
+    	case '9': // azul
+        	red = 0.0f;
+            green = 0.0f;
+            blue = 1.0f;
+    		break;
+    	///// iluminação
+       case 'r': // Habilita a fonte de luz - ligar a luz
+           	glEnable(GL_LIGHTING);
+   			glEnable(GL_LIGHT0);
+			break;
+		case 'b': // Desabilito a fonte de Luz - desligar a luz  
+			glDisable(GL_LIGHTING);
+			glDisable(GL_LIGHT0); 	
         default:
             break;
     }
 
    if (playerX >= (exitX - 0.05) && playerX <= (exitX + 0.05) && playerY >= (exitY - 0.05) && playerY <= (exitY + 0.05)) {
         	score++; // Incrementar a pontuação
-        	printf("Pontuacao: %d\n", score); // Exibir a pontuação atualizada
+        	//printf("Pontuacao: %d\n", score); // Exibir a pontuação atualizada
         	
         	
         	
         	mover_flag();      
-    	}
+    }
     	
   	if (playerX2 <= (exitX + 0.05) && playerX2 >= (exitX - 0.05) && playerY2 <= (exitY + 0.05) && playerY2 >= (exitY - 0.05)) {
         	score2++; // Incrementar a pontuação
-        	printf("Pontuacao: %d\n", score2); // Exibir a pontuação atualizada
-        	
+        	//printf("Pontuacao: %d\n", score2); // Exibir a pontuação atualizada
+        	   
         	
         	   mover_flag();    
-    	}
+    }
+    
+    if(score==5 || score2==5){
+    	if(score>score2){
+			recorde=score;
+			jog=1;
+		}else if(score2>score){
+			recorde=score2;
+			jog=2;
+		}
+		
+			FILE* arquivo = fopen("recordes.txt", "a");
+    		if (arquivo == NULL) {
+        		printf("Erro ao abrir arquivo.\n");
+        	}
+			 
+   			fprintf(arquivo, "\n  Jogador %d    |      %d    |    %d s    |  %02d/%02d/%d", jog, recorde, tempo_atual, dia, mes, ano);
+   		
+		    fclose(arquivo);
+		    
+		    
+		    
+		    /////////////////////////////////////////////////////////
     	
+    	printf("\n\nParabéns..\n\nVocê entrou no nosso livro dos recordes");
+    	exit(0);
+    	
+	}	
+	  
 	glutPostRedisplay(); // Atualizar a tela
-	
-	
-
 
 }
 
-  /*  	int ii;
-    	float min2 = -0.9, max2 = 0.9, step2 = 0.05;
-    	int range2 = (max2 - min2) / step2 + 1;
-    	float num3, num4;
-    	char string_formatada2[10];
 
-    // seed para a função rand()
-    srand(time(NULL));
-
-    for (ii = 0; ii < 10; ii++) {
-        // gera um número aleatório inteiro entre 0 e range-1
-        int random_int2 = rand() % range2;
-
-        // ajusta o número para que fique dentro da faixa desejada e com a variação desejada
-        num4 = min2 + random_int2 * step2;
-     //   printf("%f",num);
-        
-        
-        
-    sprintf(string_formatada2, "%.1f", num4); // formata o número em uma string com uma casa decimal
-    sscanf(string_formatada2, "%f", &num3); // lê a string formatada em uma nova variável float
-   
- 	printf("%f",num3);
- 	}
-		
-		exitX2=exitX2-num3;
-    	exitY2=exitY2+num3;
-		
-		
-		
-
-	if(exitX2<-0.9 && exitY2<-0.9){
-		exitX2=exitX2+num3;
-		exitY2=exitX2+num3;	
-	}else if(exitX2>0.9 && exitY2>0.9){
-		exitX2=exitX2-num3;
-		exitY2=exitX2-num3;	
-	}else if(exitX2<-0.9 && exitY2>0.9){
-		exitX2=exitX2+num3;
-		exitY2=exitY2-num3;	
-	}else if(exitX2>0.9 && exitY2<-0.9){
-		exitX2=exitX2-num3;
-		exitY2=exitY2+num3;
-	}else if(exitX2<-0.9){
-			exitX2=exitX2-num3;
-	}else if(exitX2>0.9){
-			exitX2=exitX2+num3;
-	}else if(exitY2>0.9){
-			exitY2=exitY2-num3;
-	}else if(exitY2<-0.9){
-			exitY2=exitY2+num3;
-	}else{
-	}
-		
-    }
-
-
-    glutPostRedisplay(); // Atualizar a tela
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-void cronometro{
-	time_t start_time, current_time;
-    double elapsed_time;
+void specialKeys(int key, int x, int y) {
+ 
+   int jog, recorde;
     
-    start_time = time(NULL);
-    
-    while (1) {
-        current_time = time(NULL);
-        elapsed_time = difftime(current_time, start_time);
-        printf("%.1lf\n", elapsed_time);
-        if (elapsed_time >= 30.0) {
+    switch (key) {
+    	int tecla;
+    	tecla = getch();
+		case GLUT_KEY_UP: // Movimentar para cima
+            if (playerY2 < 0.9) { // Verificar se não há colisão na direção desejada
+                playerY2 += 0.1;
+            }
             break;
-        }
+        case GLUT_KEY_LEFT: // Movimentar para a esquerda
+            if (playerX2 > -0.9) { // Verificar se não há colisão na direção desejada
+                playerX2 -= 0.1;
+            }
+            break;
+        case GLUT_KEY_DOWN: // Movimentar para baixo
+            if (playerY2 > -0.9) { // Verificar se não há colisão na direção desejada
+                playerY2 -= 0.1;
+            }
+            break;
+        case GLUT_KEY_RIGHT: // Movimentar para a direita
+            if (playerX2 < 0.9) { // Verificar se não há colisão na direção desejada
+                playerX2 += 0.1;
+            }
+            break;    
+        default:
+            break;
     }
-}
-*/
 
-/*
+   if (playerX >= (exitX - 0.05) && playerX <= (exitX + 0.05) && playerY >= (exitY - 0.05) && playerY <= (exitY + 0.05)) {
+        	score++; // Incrementar a pontuação
+        	//printf("Pontuacao: %d\n", score); // Exibir a pontuação atualizada
+        	
+        	
+        	
+        	mover_flag();      
+    }
+    	
+  	if (playerX2 <= (exitX + 0.05) && playerX2 >= (exitX - 0.05) && playerY2 <= (exitY + 0.05) && playerY2 >= (exitY - 0.05)) {
+        	score2++; // Incrementar a pontuação
+        	//printf("Pontuacao: %d\n", score2); // Exibir a pontuação atualizada
+        	   
+        	
+        	   mover_flag();    
+    }
+    
+    if(score==5 || score2==5){
+    	if(score>score2){
+			recorde=score;
+			jog=1;
+		}else if(score2>score){
+			recorde=score2;
+			jog=2;
+		}
+		
+			FILE* arquivo = fopen("recordes.txt", "a");
+    		if (arquivo == NULL) {
+        		printf("Erro ao abrir arquivo.\n");
+        	}
+			 
+   			fprintf(arquivo, "\n  Jogador %d    |      %d    |    %d s    |  %02d/%02d/%d", jog, recorde, tempo_atual, dia, mes, ano);
+   		
+		    fclose(arquivo);
+    
+    	exit(0);
+	}	
+	  
+	glutPostRedisplay(); // Atualizar a tela
+
+}
+
+
+void instrucoes(){
+	system("cls");
+	printf("\netteete\n\n\n");
+
+	system("pause");
+	int main();
+	
+
+}
+
+
+
+
 
 void atualizaTempo(int valor) {
     // atualiza o tempo atual do cronômetro
@@ -396,371 +559,68 @@ void atualizaTempo(int valor) {
     if (tempo_atual > tempo_total) {
         tempo_atual = tempo_total;
     }
-
     // formata o tempo em segundos com uma casa decimal
     sprintf(tempo_str, "%.1f", (float)tempo_atual);
-
     // redesenha a janela
     glutPostRedisplay();
-
     // registra a função novamente para atualizar o tempo a cada 10 milissegundos
-    glutTimerFunc(10, atualizaTempo, 0);
+    glutTimerFunc(0, atualizaTempo, 0);
 }
-
-void desenhaCena() {
-    
-}*/
-
-
-
-
-  
-
-    
-
 
 
 
 int main(int argc, char** argv) {
+	setlocale(LC_ALL, "Portuguese");
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowSize(500, 500);
-	glutInitWindowPosition(100, 100);
-	glutCreateWindow("Labirinto");
-	init();
-	glutDisplayFunc(display);
-	glutKeyboardFunc(keyboard);
- 
 
-/*    // registra a função que atualiza o tempo
-    tempo_anterior = glutGet(GLUT_ELAPSED_TIME);
-    glutTimerFunc(10, atualizaTempo, 0);
-*/
-
-
-	glutMainLoop();
-	
-	return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-#include <GL/glut.h>
-
-float playerX = -0.8; // Posição X do jogador
-float playerY = -0.8; // Posição Y do jogador
-
-void display(void) {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glColor3f(1.0, 1.0, 1.0); // Cor dos caminhos do labirinto
-
-    // Desenhar os caminhos do labirinto
-    glBegin(GL_LINES);
-    glVertex2f(-0.9, -0.9); // Ponto inicial
-    glVertex2f(0.9, -0.9); // Ponto final
-    glVertex2f(-0.9, -0.9);
-    glVertex2f(-0.9, 0.9);
-    glVertex2f(0.9, -0.9);
-    glVertex2f(0.9, 0.9);
-    glVertex2f(-0.9, 0.9);
-    glVertex2f(0.9, 0.9);
-    glEnd();
-
-    glColor3f(0.0, 1.0, 0.0); // Cor da saída do labirinto
-
-    // Desenhar a saída do labirinto
-    glBegin(GL_QUADS);
-    glVertex2f(0.8, -0.9); // Ponto inferior esquerdo
-    glVertex2f(0.9, -0.9); // Ponto inferior direito
-    glVertex2f(0.9, -0.8); // Ponto superior direito
-    glVertex2f(0.8, -0.8); // Ponto superior esquerdo
-    glEnd();
-
-    glColor3f(1.0, 0.0, 0.0); // Cor do jogador
-
-    // Desenhar o jogador
-    glBegin(GL_QUADS);
-    glVertex2f(playerX - 0.05, playerY - 0.05); // Ponto inferior esquerdo
-    glVertex2f(playerX + 0.05, playerY - 0.05); // Ponto inferior direito
-    glVertex2f(playerX + 0.05, playerY + 0.05); // Ponto superior direito
-    glVertex2f(playerX - 0.05, playerY + 0.05); // Ponto superior esquerdo
-    glEnd();
-
-    glFlush();
-}
-
-void init(void) {
-    glClearColor(0.0, 0.0, 0.0, 0.0); // Cor de fundo
-    glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0); // Sistema de coordenadas
-}
-
-void keyboard(unsigned char key, int x, int y) {
-    // Função de callback do teclado para mover o jogador
-
-    switch (key) {
-        case 'w': // Movimentar para cima
-            if (playerY < 0.9) { // Verificar se não há colisão na direção desejada
-                playerY += 0.1;
-            }
-            break;
-        case 'a': // Movimentar para a esquerda
-            if (playerX > -0.9) { // Verificar se não há colisão na direção deseja
-				playerX -= 0.1;
-			}
-			break;
-		case 's': // Movimentar para baixo
-			if (playerY > -0.9) { // Verificar se não há colisão na direção desejada
-				playerY -= 0.1;
-			}
-			break;
-		case 'd': // Movimentar para a direita
-			if (playerX < 0.9) { // Verificar se não há colisão na direção desejada
-				playerX += 0.1;
-			}
-			break;
-		default:
-			break;
-			}
-			glutPostRedisplay(); // Atualizar a tela
-			}
-
-int main(int argc, char** argv) {
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowSize(500, 500);
-	glutInitWindowPosition(100, 100);
-	glutCreateWindow("Labirinto");
-	init();
-	glutDisplayFunc(display);
-	glutKeyboardFunc(keyboard);
-	glutMainLoop();
-	
-	return 0;
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//////////////  controle de colisão
-/*
-var rect1 = {x: 5, y: 5, width: 50, height: 50}
-var rect2 = {x: 20, y: 10, width: 10, height: 10}
-
-
-if (rect1.x < rect2.x + rect2.width &&
-   rect1.x + rect1.width > rect2.x &&
-   rect1.y < rect2.y + rect2.height &&
-   rect1.y + rect1.height > rect2.y) {
-    // collision detected!
-}
-
-// filling in the values =>
-
-if (5 < 30 &&
-    55 > 20 &&
-    5 < 20 &&
-    55 > 10) {
-    // collision detected!
-}
-*/
-
-
-
-
-
-
-
-
-
-
-/*
-
-#include <graphics.h>
-#include <stdlib.h>
-#include <time.h>
-#include <stdio.h>
-#include <sstream>
-
-
-
-#define COLS 30
-#define ROWS 30
-#define CELL_SIZE 30
-#define WALL_THICKNESS 7
-
-#define WIDTH 800 // largura da janela
-#define HEIGHT 700 // altura da janela
-
-
-int maze[COLS][ROWS];
-
-void draw_maze()
-{
-    int x, y;
-    setcolor(WHITE);
-    // Desenha as paredes horizontais
-    for (y = 0; y <= ROWS; y++) {
-        for (x = 0; x < COLS; x++) {
-            if (maze[x][y] & 1) {
-                setfillstyle(SOLID_FILL, WHITE);
-                bar(x*CELL_SIZE, y*CELL_SIZE, (x+1)*CELL_SIZE, y*CELL_SIZE+WALL_THICKNESS);
-            }
-        }
-    }
-    // Desenha as paredes verticais
-    for (x = 0; x <= COLS; x++) {
-        for (y = 0; y < ROWS; y++) {
-            if (maze[x][y] & 2) {
-                setfillstyle(SOLID_FILL, WHITE);
-                bar(x*CELL_SIZE, y*CELL_SIZE, x*CELL_SIZE+WALL_THICKNESS, (y+1)*CELL_SIZE);
-            }
-        }
-    }
-}
-
-
-
-
-void draw_triangle(){
-	
-	int a = WIDTH / 2; // posição inicial do triângulo
-    int b = HEIGHT / 2;
-    int size = 5; // tamanho do triângulo
-
-    while (1) {
-        if (kbhit()) { // se alguma tecla for pressionada
-            int key = getch(); // obtém o código da tecla pressionada
-
-            if (key == 27) { // se for a tecla ESC, sai do programa
-                break;
-            }
-            else if (key == 'a') { // se for a tecla 'a', move o triângulo para a esquerda
-                a -= 10;
-            }
-            else if (key == 'd') { // se for a tecla 'd', move o triângulo para a direita
-                a += 10;
-            }
-            else if (key == 'w') { // se for a tecla 'w', move o triângulo para cima
-                b -= 10;
-            }
-            else if (key == 's') { // se for a tecla 's', move o triângulo para baixo
-                b += 10;
-            }
-    
-}
-    
-            
-            //cleardevice(); // limpa a tela
-            setfillstyle(SOLID_FILL, COLOR(255, 255, 255));
-            int points[] = { a, b - size, a - size, b + size, a + size, b + size };
-            fillpoly(3, points);
-        }
-    }
     
 
-int main()
-{
-	
-
-    int gd = DETECT, gm;
-    
-    // Inicializa a biblioteca graphics
-    initgraph(&gd, &gm, "");
-    
-    
-    
-	int x, y;
-// Define a semente aleatória
-    srand(time(NULL));
-    // Inicializa o labirinto com todas as paredes
-    for (x = 0; x < COLS; x++) {
-        for (y = 0; y < ROWS; y++) {
-            maze[x][y] = 15;
-        }
-    }
-    // Gera o labirinto
-    // Aqui você pode utilizar o algoritmo de sua preferência para gerar o labirinto
-    // Por exemplo, o algoritmo de Kruskal, Prim ou Recursive Backtracker
-    // Neste exemplo, eu vou gerar um labirinto aleatório
-    for (x = 0; x < COLS; x++) {
-        for (y = 0; y < ROWS; y++) {
-            int r = rand() % 4;
-            if (r == 0 && x > 0) {
-                maze[x][y] &= ~1;
-                maze[x-1][y] &= ~2;
-            } else if (r == 1 && x < COLS-1) {
-                maze[x][y] &= ~1;
-                maze[x+1][y] &= ~2;
-            } else if (r == 2 && y > 0) {
-                maze[x][y] &= ~2;
-                maze[x][y-1] &= ~1;
-            } else if (r == 3 && y < ROWS-1) {
-                maze[x][y] &= ~2;
-                maze[x][y+1] &= ~1;
-            }
-        }
-    }
-    // Desenha o labirinto na tela
-    draw_maze();
-	
-	
-	
-	
-	
-	
 	 
-	draw_triangle();
-    
-    
-    
-    
-    
-    // Aguarda uma tecla ser pressionada para finalizar o programa
-    getch();
-    // Finaliza a biblioteca graphics
-    closegraph();
-    return 0;
+	do{
+		system("cls");
+		printf(" -------------------------- \n"); 
+		printf(" |        Jonjo Game        | \n"); 
+		printf(" --------------------------\n");
+		printf("1. Start Game\n");
+		printf("2. Instruções\n");	 
+		printf("3. Recordes\n");
+		printf("4. Quit\n\n");
+		printf("Select option: ");
+				
+		char op = getche();
+		system("cls");
+		
+		if(op=='1'){
+			glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+			glutInitWindowSize(500, 500);
+			glutInitWindowPosition(100, 100);
+			glutCreateWindow("Labirinto");
+	
+			init();
+			glutDisplayFunc(display);
+			glutKeyboardFunc(keyboard);
+			glutSpecialFunc(specialKeys);
+			// registra a função que atualiza o tempo
+    		tempo_anterior = glutGet(GLUT_ELAPSED_TIME);
+    		glutTimerFunc(10, atualizaTempo, 0);
+			glutMainLoop();
+		}else if(op=='2'){
+			instrucoes();		
+		}else if(op=='3'){
+			records();
+		}else if(op=='4'){
+			exit(0);
+		}else{
+		} 
+		
+	}while(9);
+
+	
+return 0;
 }
-*/
+
+
+
+
+
+
